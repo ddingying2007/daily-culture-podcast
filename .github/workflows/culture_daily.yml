@@ -1,0 +1,68 @@
+name: Daily Culture Podcast
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # 每天8:00运行（北京时间16:00）
+  workflow_dispatch:  # 手动触发
+  push:
+    branches: [ main ]
+    paths:
+      - 'culture_*.py'
+      - 'culture_database.py'
+
+jobs:
+  generate-podcast:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 检出代码
+      uses: actions/checkout@v3
+    
+    - name: 设置Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: 安装依赖
+      run: |
+        python -m pip install --upgrade pip
+        pip install edge-tts PyYAML
+    
+    - name: 生成文化播客
+      run: |
+        echo "🎨 开始生成每日文化播客..."
+        python culture_core.py
+        
+        echo "生成的音频文件:"
+        ls -la culture_podcast/audio/ 2>/dev/null || echo "无音频文件"
+        
+        echo "生成的元数据:"
+        ls -la culture_podcast/metadata/ 2>/dev/null || echo "无元数据"
+    
+    - name: 生成视频（可选）
+      run: |
+        if [ -f "simple_video.py" ]; then
+          echo "🎬 生成视频号内容..."
+          python simple_video.py --auto
+          
+          echo "生成的视频文件:"
+          ls -la weixin_videos/ 2>/dev/null || echo "无视频文件"
+        else
+          echo "⚠️  跳过视频生成"
+        fi
+    
+    - name: 上传播客文件
+      uses: actions/upload-artifact@v3
+      with:
+        name: culture-podcast
+        path: |
+          culture_podcast/audio/*.mp3
+          culture_podcast/metadata/*.json
+          weixin_videos/*.mp4
+        retention-days: 7
+    
+    - name: 生成总结
+      run: |
+        echo "🎉 每日文化播客生成完成！"
+        echo "📅 完成时间: $(date)"
+        echo "📥 下载地址: 在Artifacts中下载 culture-podcast"
