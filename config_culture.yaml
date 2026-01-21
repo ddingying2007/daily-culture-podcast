@@ -1,0 +1,49 @@
+# config_culture.yaml
+culture_podcast:
+  # 基础设置
+  project_name: "每日文化播客"
+  version: "1.0"
+  author: "文化传播者"
+  
+  # 目录设置
+  directories:
+    podcast_output: "culture_podcast/audio"
+    metadata_output: "culture_podcast/metadata"
+    scripts_output: "culture_podcast/scripts"
+    videos_output: "weixin_videos"
+    assets_dir: "video_assets"
+  
+  # 内容设置
+  content:
+    themes: ["art", "history", "literature", "music", "film", "museum"]
+    default_theme: "art"
+    max_duration_minutes: 15
+    language: "zh-CN"
+    
+  # 音频设置
+  audio:
+    tts_engine: "edge-tts"
+    default_voice: "zh-CN-XiaoxiaoNeural"
+    speech_rate: "+5%"
+    output_format: "mp3"
+    bitrate: "64k"
+    
+  # 视频设置（可选）
+  video:
+    enabled: true
+    resolution: [1080, 1920]  # 竖屏
+    max_duration_seconds: 60
+    output_format: "mp3"
+    
+  # 发布设置
+  publish:
+    auto_generate: true
+    generate_rss: true
+    rss_feed_name: "culture_feed.xml"
+    generate_video: true
+    
+  # 调度设置
+  schedule:
+    enabled: true
+    run_time: "08:00"
+    timezone: "Asia/Shanghai"
